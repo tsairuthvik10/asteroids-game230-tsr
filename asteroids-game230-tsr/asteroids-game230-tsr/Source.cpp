@@ -1,6 +1,8 @@
 #include "Bullet.h"
 #include "Ship.h"
+#include "Menu.h"
 #include "Asteroid.h"
+#include <iostream>
 #include <algorithm>
 #include <stdio.h>
 #include <conio.h>
@@ -17,6 +19,7 @@ using namespace sf;
 
 void update_state(float dt);
 void render_frame();
+int main1();
 void load();
 void loadAsteroids();
 void make_bullet();
@@ -75,6 +78,74 @@ float dist(Vector2f x, Vector2f y) {
 
 int main()
 {
+	sf::RenderWindow window(sf::VideoMode(800, 800), "YouTube War");
+
+	Menu menu(window.getSize().x, window.getSize().y);
+	if (!start.openFromFile("pewd.ogg"))
+		return -1; // error
+	start.play();
+	start.setLoop(true);
+
+	while (window.isOpen())
+	{
+		sf::Event event;
+
+		while (window.pollEvent(event))
+		{
+			switch (event.type)
+			{
+			case sf::Event::KeyReleased:
+				switch (event.key.code)
+				{
+				case sf::Keyboard::Up:
+					menu.MoveUp();
+					break;
+
+				case sf::Keyboard::Down:
+					menu.MoveDown();
+					break;
+
+				case sf::Keyboard::Return:
+					switch (menu.GetPressedItem())
+					{
+					case 0:
+						std::cout << "Play button has been pressed" << std::endl;
+						main1();
+						break;
+					case 1:
+						window.close();
+						break;
+					}
+
+					break;
+				}
+
+				break;
+			case sf::Event::Closed:
+				window.close();
+
+				break;
+
+			}
+		}
+		if (event.type == sf::Event::KeyPressed) {
+			if (event.key.code == Keyboard::Escape) {
+				lose_screen = false;
+				window.close();
+			}
+		}
+
+		window.clear();
+
+		menu.draw(window);
+
+		window.display();
+	}
+}
+
+int main1()
+{
+	
 	*lives = 10;
 	curr_lives = *lives;
 	s_buff.loadFromFile("pew.wav");
@@ -83,10 +154,7 @@ int main()
 	pop.setBuffer(p_buff);
 	w_buff.loadFromFile("win.wav");
 	win.setBuffer(w_buff);
-	if (!start.openFromFile("pewd.ogg"))
-		return -1; // error
-	start.play();
-	start.setLoop(true);
+	
 	font.loadFromFile("font.TTF");
 	score_t.setFont(font);
 	score_t.setCharacterSize(16);
@@ -99,18 +167,20 @@ int main()
 	lives_t.setPosition(SCREENWIDTH - 80, SCREENHEIGHT - 20);
 	lose_text.setFont(font);
 	lose_text.setPosition(0, 0);
-	lose_text.setCharacterSize(48);
+	lose_text.setCharacterSize(24);
 
 	srand(time(NULL));
 	window.create(VideoMode(SCREENWIDTH, SCREENHEIGHT), "YouTube War");
+	//Menu menu(window.getSize().x, window.getSize().y);
 	Clock clock;
 	
-	load();
+	reset_game();
 	while (window.isOpen())
 	{
 		Event event;
 		while (window.pollEvent(event))
 		{
+			
 			if (event.type == sf::Event::Closed)
 				window.close();
 			if (event.type == sf::Event::MouseButtonPressed)
@@ -125,6 +195,13 @@ int main()
 				if (event.key.code == Keyboard::Return && lose_screen) {
 					lose_screen = false;
 					reset_game();
+				}
+			}
+
+			if (event.type == sf::Event::KeyPressed) {
+				if (event.key.code == Keyboard::Escape) {
+					lose_screen = false;
+					window.close();
 				}
 			}
 		}
@@ -143,9 +220,12 @@ void update_state(float dt)
 {
 	if (!lose_screen) {
 		if (*lives == 0) {
-			lose_text.setString("Your score was: " + to_string(target_score) +
-				"\nPress Enter to play again.");
+			lose_text.setString("Your total subscribers are: " + to_string(target_score) +
+				"million \nYou PewDiePie You Lose...");
+
 			lose_screen = true;
+			
+			
 		}
 		if (curr_lives > *lives) {
 			lives_t.setString("Lives: " + to_string(*lives));
@@ -153,11 +233,11 @@ void update_state(float dt)
 		}
 		if (score < target_score) {
 			score += 1;
-			score_t.setString("Score: " + to_string(score));
+			score_t.setString("Subscribers: " + to_string(score));
 		}
 		else if (score > target_score) {
 			score = target_score;
-			score_t.setString("Score: " + to_string(score));
+			score_t.setString("Subscribers: " + to_string(score));
 		}
 		curr_asteroids = 0;
 		for (auto i = SceneGraph.begin(); i != SceneGraph.end(); ++i) {
@@ -230,7 +310,7 @@ void next_level() {
 }
 void reset_game()
 {
-	
+	load();
 	for (auto i = SceneGraph.begin(); i != SceneGraph.end(); ++i) {
 		delete *i;
 	}
@@ -248,7 +328,7 @@ void reset_game()
 	score = 0;
 	target_score = 0;
 	num_asteroids = 2;
-	score_t.setString("Score: " + to_string(score));
+	score_t.setString("Subscribers: " + to_string(score));
 	lives_t.setString("Lives: " + to_string(*lives));
 	loadAsteroids();
 }

@@ -148,6 +148,7 @@
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
@@ -155,6 +156,7 @@
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Ship.h" />
   </ItemGroup>
   <ItemGroup>
@@ -165,10 +167,6 @@
     <Media Include="pew.wav" />
     <Media Include="pop.wav" />
     <Media Include="win.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="ship.png" />
-    <Image Include="ship_fire.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="pewd.ogg" />
